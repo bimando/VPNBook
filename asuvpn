@@ -1,0 +1,89 @@
+#!/bin/bash
+# ASUVPN - EASY VPN with VPNBOOK.COM
+
+YELLOW='\033[1;33m'
+RESET='\033[0m'
+
+url='http://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-'
+conf='VPNBook.com-OpenVPN-'
+prc=${YELLOW}'Downloading and Extracting config file...'
+
+echo -e "${YELLOW}Connecting to www.vpnbook.com...${RESET}"
+wget -q -O ~/vpnbook.tmp www.vpnbook.com/freevpn
+username=$(cat ~/vpnbook.tmp | grep -m 1 -i "<li>Username:" | replace "<li>Username: <strong>" "" | replace "</strong></li>" "" | tr -d "\t" | tr -d " ")
+password=$(cat ~/vpnbook.tmp | grep -m 1 -i "<li>Password:" | replace "<li>Password: <strong>" "" | replace "</strong></li>" "" | tr -d "\t")
+rm ~/vpnbook.tmp
+
+echo -e " --------------------------------------------"
+echo -e " Use this detail to authenticate to server..."
+echo -e " Username: ${YELLOW}$username${RESET}"
+echo -e " Password: ${YELLOW}$password${RESET}"
+echo -e " --------------------------------------------"
+echo "Choose your VPN Server connection destination: "
+PS3='Please enter your choice: '
+options=("USA1" "USA2" "CANADA" "EUROPE1" "EUROPE2" "GERMANY" "Quit")
+select opt in "${options[@]}"
+do
+        case $opt in
+                "USA1")
+			sv='US1.zip'
+                        echo -e "${YELLOW}Connecting to USA1 VPN server...${RESET}"
+                        cd /tmp
+			echo -e $prc
+			wget -q -nv ${url}${sv} && unzip -qq ${conf}${sv}
+                        openvpn /tmp/vpnbook-us1-tcp443.ovpn
+                        break
+                        ;;
+                "USA2")
+			sv='US2.zip'
+                        echo -e "${YELLOW}Connecting to USA2 VPN server...${RESET}"
+                        cd /tmp
+			echo -e $prc
+			wget -q -nv ${url}${sv} && unzip -qq ${conf}${sv}
+                        openvpn /tmp/vpnbook-us2-tcp443.ovpn
+                        break
+                        ;;
+                "CANADA")
+			sv='CA1.zip'
+                        echo -e "${YELLOW}Connecting to Canada VPN server...${RESET}"
+			cd /tmp
+			echo -e $prc
+			wget -q -nv ${url}${sv} && unzip -qq ${conf}${sv}
+                        openvpn /tmp/vpnbook-ca1-tcp443.ovpn
+                        break;
+                        ;;
+                "EUROPE1")
+			sv='Euro1.zip'
+                        echo -e "${YELLOW}Connecting to Europe1 VPN server...${RESET}"
+                        cd /tmp
+			echo -e $prc
+			wget -q -nv ${url}${sv} && unzip -qq ${conf}${sv}
+                        openvpn /tmp/vpnbook-euro1-tcp443.ovpn
+                        break
+                        ;;
+                "EUROPE2")
+			sv='Euro2.zip'
+                        echo -e "${YELLOW}Connecting to Europe2 VPN server...${RESET}"
+                        cd /tmp
+			echo -e $prc
+			wget -q -nv ${url}${sv} && unzip -qq ${conf}${sv}
+                        openvpn /tmp/vpnbook-euro2-tcp443.ovpn
+                        break
+                        ;;
+                "GERMANY")
+			sv='DE1.zip'
+                        echo -e "${YELLOW}Connecting to Germany VPN server...${RESET}"
+                        cd /tmp
+			echo -e $prc
+			wget -q -nv ${url}${sv} && unzip -qq ${conf}${sv}
+                        openvpn /tmp/vpnbook-de233-tcp443.ovpn
+                        break
+                        ;;
+                "Quit")
+                        echo "Exiting..."
+                        break
+                        ;;
+
+                *) echo Invalid option, try again.;;
+        esac
+done
